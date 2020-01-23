@@ -59,3 +59,5 @@ def pool_forward(A_prev, hparameters, mode = "max"):
     assert(A.shape == (m, n_H, n_W, n_C))
     
     return A, cache
+    
+    
