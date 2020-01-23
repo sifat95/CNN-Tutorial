@@ -1,6 +1,15 @@
 # Convolutional Neural Network
 
-# Building Blocks of a Neural Network using Convolution
+
+
+The formulas relating the output shape of the convolution to the input shape is:
+
+                                          nH = ⌊(nHprev−f+2×pad)/stride⌋+1
+ 
+                                          nW = ⌊(nWprev−f+2×pad)/stride⌋+1
+                                          
+                                          nC = number of filters used in the convolution
+# Building Blocks of a Convolutional Neural Network 
 
 ![Convolutional Layer](https://github.com/sifat95/CNN-Tutorial/blob/master/images/model.png)
 
@@ -19,14 +28,15 @@
 ## Convolution Functions
 ### Two helper functions
 
- 1. **Zero Padding**: As we know most of the time deeper networks are built which may shrink the height and width of the volumes causing data loss. So zero padding adds zeros around an image that helps us keep more of the information at the border of that image.
+ 1. **Zero Padding**: As we know, most of the time deeper networks are built which may shrink the height and width of the volumes causing data loss. So zero padding adds zeros around an image that helps us keep more of the information at the border of that image.
  
 ![padding](https://github.com/sifat95/CNN-Tutorial/blob/master/images/PAD.png)
 
 Now let's pad with zeros all images of the dataset X. The padding is applied to the height and width of an image, as illustrated in Figure 1.
 
 #### Arguments of the Function:
-X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images\
+X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images
+
 pad -- integer, amount of padding around each image on vertical and horizontal dimensions
 
 #### The Function Returns:
@@ -66,15 +76,20 @@ Z -- a scalar value, the result of convolving the sliding window (W, b) on a sli
         
 ### Convolution
  1. **Forward Propagation**
-Implements the forward propagation for a convolution function
+In the forward pass, inputs are convolved with many filters. Each 'convolution' gives a 2D matrix output. And at the end, these outputs are stacked to get a 3D volume.
+
 #### Arguments of the Function:
-A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)\
-W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)\
-b -- Biases, numpy array of shape (1, 1, 1, n_C)\
+A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+
+W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)
+
+b -- Biases, numpy array of shape (1, 1, 1, n_C)
+
 hparameters -- python dictionary containing "stride" and "pad"
         
 #### The Function Returns:
-Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)\
+Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)
+
 cache -- cache of values needed for the conv_backward() function
 
     def conv_forward(A_prev, W, b, hparameters):
@@ -128,15 +143,21 @@ cache -- cache of values needed for the conv_backward() function
         
   2. **Backward Propagation**
  
- Implement the backward propagation for a convolution function
-    
+Here we will implement the backward propagation for a convolution function. This is the formula for computing  db with respect to the cost for a certain filter  Wc:
+
+                                                       db = ∑∑dZh
+                                                            h w
 #### Arguments of the Function:
-dZ -- gradient of the cost with respect to the output of the conv layer (Z), numpy array of shape (m, n_H, n_W, n_C)\
-cache -- cache of values needed for the conv_backward(), output of conv_forward()\
+dZ -- gradient of the cost with respect to the output of the conv layer (Z), numpy array of shape (m, n_H, n_W, n_C)
+
+cache -- cache of values needed for the conv_backward(), output of conv_forward()
+
 #### The Function Returns:
-dA_prev -- gradient of the cost with respect to the input of the conv layer (A_prev), numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)\
+dA_prev -- gradient of the cost with respect to the input of the conv layer (A_prev), numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+
 dW -- gradient of the cost with respect to the weights of the conv layer (W)
-          numpy array of shape (f, f, n_C_prev, n_C)\
+          numpy array of shape (f, f, n_C_prev, n_C)
+          
 db -- gradient of the cost with respect to the biases of the conv layer (b)
           numpy array of shape (1, 1, 1, n_C)
  
@@ -199,11 +220,15 @@ db -- gradient of the cost with respect to the biases of the conv layer (b)
 
         return dA_prev, dW, db
 
- 
-
 ## Pooling Functions
+The pooling (POOL) layer reduces the height and width of the input. It helps reduce computation, as well as helps make feature detectors more invariant to its position in the input. The two types of pooling layers are:
+
+**Max-pooling layer:** slides an (f,f) window over the input and stores the max value of the window in the output.
+
+**Average-pooling layer:** slides an (f, f) window over the input and stores the average value of the window in the output.
+These pooling layers have no parameters for backpropagation to train.
 ### Forward Pass of the Pooling Layer
-Implements the forward pass of the pooling layer
+Implements the forward pass of the pooling layer.
     
 #### Arguments of the Function:
 A_prev -- Input data, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
@@ -262,9 +287,23 @@ cache -- cache used in the backward pass of the pooling layer, contains the inpu
        return A, cache
 
 ### Backward Pass of the Pooling layer
+Let's implement the backward pass for the pooling layer, starting with the MAX-POOL layer. Even though a pooling layer has no parameters for backprop to update, it is still needed to backpropagate the gradient through the pooling layer in order to compute gradients for layers that came before the pooling layer.
 
- 1. **Creating Mask**
-Creates a mask from an input matrix x, to identify the max entry of x.
+#### Max pooling - backward pass 
+A "mask" matrix is needed as follows which keeps track of where the maximum of the matrix is. True (1) indicates the position of the maximum in X, the other entries are False (0). 
+
+![mask]()
+
+#### Average Pooling - backward pass
+In average pooling, every element of the input window has equal influence on the output. So to implement backprop, for example if we did average pooling in the forward pass using a 2x2 filter, then the mask you'll use for the backward pass will look like
+
+![avg]()
+
+This implies that each position in the  dZdZ  matrix contributes equally to output because in the forward pass, we took an average.
+
+ 1. **Creating Mask:** It is a helper function for MAX Pooling.
+ 
+It creates a mask from an input matrix x, to identify the max entry of x.
     
 #### Arguments of the Function:
 x -- Array of shape (f, f)
@@ -278,11 +317,12 @@ mask -- Array of the same shape as window, contains a True at the position corre
     
         return mask
         
- 2. **Distribute the Value**
-Distributes the input value in the matrix of dimension shape
+ 2. **Distribute the Value:** It is a helper function for AVG Pooling.
+It distributes the input value in the matrix of dimension shape
     
 #### Arguments of the Function:
 dz -- input scalar
+
 shape -- the shape (n_H, n_W) of the output matrix for which we want to distribute the value of dz
     
 #### The Function Returns:
@@ -306,7 +346,9 @@ Implements the backward pass of the pooling layer
     
 #### Arguments of the Function:
 dA -- gradient of cost with respect to the output of the pooling layer, same shape as A
+
 cache -- cache output from the forward pass of the pooling layer, contains the layer's input and hparameters 
+
 mode -- the pooling mode you would like to use, defined as a string ("max" or "average")
     
 #### The Function Returns:
@@ -366,3 +408,29 @@ dA_prev -- gradient of cost with respect to the input of the pooling layer, same
         assert(dA_prev.shape == A_prev.shape)
 
         return dA_prev
+        
+This is how one layer of convolutional neural network works by integrating all its buliding blocks. So now we can stack a bunch of these layers together to form a deeper convolutional neural network.
+     
+# Why Convolutions?
+Before explaining the reason behind the preference of convolutional neural networks over fully connected networks in computer vision, let's look into the number of parameters involved in neural network.
+
+    #figure
+
+In the above figure, a 32 by 32 by 3 image is convolved using five by five with six filters. And so, this gives you a 28 by 28 by 6 dimensional output. So, 32 by 32 by 3 is 3,072, and 28 by 28 by 6 if you multiply all those numbers is 4,704. And so, to create a neural network with 3,072 units in one layer, and with 4,704 units in the next layer, and if fully connected network is used, then, the number of parameters in a weight matrix would be 3,072 times 4,704 which is about 14 million. So, that's just a lot of parameters to train.
+
+But if we look at the number of parameters in this convolutional layer, each filter is five by five. So, each filter has 25 parameters, plus a bias parameter miss of 26 parameters per a filter, and you have six filters, so, the total number of parameters is that, which is equal to 156 parameters. And so, the number of parameters in this conv layer remains quite small.
+
+So reasons behind these small number of parameters are- parameter sharing and sparsity of connections, which are considered two main advantages of CNN.
+
+ 1. #### **Parameter Sharing** means it learns the data-dependent filter based on parts of input images. That is, a feature detector such as vertical edge detector, that's useful in one part of the image is probably useful in another part of the image.
+
+2. #### **Sparsity of Connections** is that each output element is depended only on some number of input.  
+If we consider this example, a six by six image is convolved using three by three convolution filter. And so, each single output depends only on this three by three inputs grid or cells. So, it is as if this output units on the right is connected only to nine out of these six by six, 36 input features. And in particular, the rest of these pixel values do not have any effects on the other output. 
+
+Noticeably, through these two mechanisms, 
+ - a convolutional neural network has a lot fewer parameters which allows it to be trained with smaller training cells and less prone to overfitting.
+ - a convolutional neural network is very good at capturing translation invariance. That means convolutional structure helps the neural network encode the fact that an image shifted a few pixels should result in pretty similar features and should probably be assigned the same label. Because of applying the image to same filter, knows all the positions of the image, both in the early layers and in the later layers that helps a neural network automatically learn to be more robust or to better capture the desirable property of translation invariance. For this reason, if a picture of a human face is shifted a couple of pixels to the right, it is still pretty clearly a face.
+ 
+So, these are a couple of the reasons why convolutional neural network work so well in computer vision.
+
+ 
