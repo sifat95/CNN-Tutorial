@@ -26,7 +26,7 @@
 Now let's pad with zeros all images of the dataset X. The padding is applied to the height and width of an image, as illustrated in Figure 1.
 
 #### Arguments of the Function:
-X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images
+X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images\
 pad -- integer, amount of padding around each image on vertical and horizontal dimensions
 
 #### The Function Returns:
@@ -46,7 +46,9 @@ Below is the code for single step convolution. It applies one filter defined by 
 
 #### Arguments of the Function:
 a_slice_prev -- slice of input data of shape (f, f, n_C_prev)
+
 W -- Weight parameters contained in a window - matrix of shape (f, f, n_C_prev)
+
 b -- Bias parameters contained in a window - matrix of shape (1, 1, 1)
 #### The Function Returns:
 Z -- a scalar value, the result of convolving the sliding window (W, b) on a slice x of the input data
@@ -66,13 +68,13 @@ Z -- a scalar value, the result of convolving the sliding window (W, b) on a sli
  1. **Forward Propagation**
 Implements the forward propagation for a convolution function
 #### Arguments of the Function:
-A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
-W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)
-b -- Biases, numpy array of shape (1, 1, 1, n_C)
+A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)\
+W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)\
+b -- Biases, numpy array of shape (1, 1, 1, n_C)\
 hparameters -- python dictionary containing "stride" and "pad"
         
 #### The Function Returns:
-Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)
+Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)\
 cache -- cache of values needed for the conv_backward() function
 
     def conv_forward(A_prev, W, b, hparameters):
@@ -129,13 +131,12 @@ cache -- cache of values needed for the conv_backward() function
  Implement the backward propagation for a convolution function
     
 #### Arguments of the Function:
-dZ -- gradient of the cost with respect to the output of the conv layer (Z), numpy array of shape (m, n_H, n_W, n_C)
-cache -- cache of values needed for the conv_backward(), output of conv_forward()
+dZ -- gradient of the cost with respect to the output of the conv layer (Z), numpy array of shape (m, n_H, n_W, n_C)\
+cache -- cache of values needed for the conv_backward(), output of conv_forward()\
 #### The Function Returns:
-dA_prev -- gradient of the cost with respect to the input of the conv layer (A_prev),
-               numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+dA_prev -- gradient of the cost with respect to the input of the conv layer (A_prev), numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)\
 dW -- gradient of the cost with respect to the weights of the conv layer (W)
-          numpy array of shape (f, f, n_C_prev, n_C)
+          numpy array of shape (f, f, n_C_prev, n_C)\
 db -- gradient of the cost with respect to the biases of the conv layer (b)
           numpy array of shape (1, 1, 1, n_C)
  
@@ -206,7 +207,9 @@ Implements the forward pass of the pooling layer
     
 #### Arguments of the Function:
 A_prev -- Input data, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+
 hparameters -- python dictionary containing "f" and "stride"
+
 mode -- the pooling mode you would like to use, defined as a string ("max" or "average")
     
 #### The Function Returns:
