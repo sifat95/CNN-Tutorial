@@ -38,8 +38,11 @@ X_pad -- padded image of shape (m, n_H + 2*pad, n_W + 2*pad, n_C)
        
         return X_pad
 
-2. **Single Step of Convolution**:
-Apply one filter defined by parameters W on a single slice (a_slice_prev) of the output activation of the previous layer.
+2. **Single Step of Convolution**: A convolutional unit is that which takes an input volume and applies a filter at every position of the input to produce a new volume. So in the convolutional unit, many single step convolutions are performed i.e. a filter is applied to every single position of the input that eventually builds a convolutional unit.
+
+![convolution](https://github.com/sifat95/CNN-Tutorial/blob/master/images/Convolution_schematic.gif)
+
+Below is the code for single step convolution. It applies one filter defined by parameters W on a single slice (a_slice_prev) of the output activation of the previous layer to get a single real-valued output. Later, this function will be applied to multiple positions of the input to implement the full convolutional operation.
 
 #### Arguments of the Function:
 a_slice_prev -- slice of input data of shape (f, f, n_C_prev)
@@ -59,7 +62,8 @@ Z -- a scalar value, the result of convolving the sliding window (W, b) on a sli
 
         return Z
         
-### Forward Propagation
+### Convolution
+ 1. **Forward Propagation**
 Implements the forward propagation for a convolution function
 #### Arguments of the Function:
 A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
@@ -119,6 +123,82 @@ cache -- cache of values needed for the conv_backward() function
         cache = (A_prev, W, b, hparameters)
 
         return Z, cache
+        
+  2. **Backward Propagation**
+ 
+ Implement the backward propagation for a convolution function
+    
+#### Arguments of the Function:
+dZ -- gradient of the cost with respect to the output of the conv layer (Z), numpy array of shape (m, n_H, n_W, n_C)
+cache -- cache of values needed for the conv_backward(), output of conv_forward()
+#### The Function Returns:
+dA_prev -- gradient of the cost with respect to the input of the conv layer (A_prev),
+               numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+dW -- gradient of the cost with respect to the weights of the conv layer (W)
+          numpy array of shape (f, f, n_C_prev, n_C)
+db -- gradient of the cost with respect to the biases of the conv layer (b)
+          numpy array of shape (1, 1, 1, n_C)
+ 
+    def conv_backward(dZ, cache):
+
+        # Retrieve information from "cache"
+        (A_prev, W, b, hparameters) = cache
+
+        # Retrieve dimensions from A_prev's shape
+        (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape
+
+        # Retrieve dimensions from W's shape
+        (f, f, n_C_prev, n_C) = W.shape
+
+        # Retrieve information from "hparameters"
+        stride = hparameters['stride']
+        pad = hparameters['pad']
+
+        # Retrieve dimensions from dZ's shape
+        (m, n_H, n_W, n_C) = dZ.shape
+
+        # Initialize dA_prev, dW, db with the correct shapes
+        dA_prev = np.random.randn(m, n_H_prev, n_W_prev, n_C_prev)
+        dW = np.random.randn(f, f, n_C_prev, n_C)
+        db = np.random.randn(f, f, n_C_prev, n_C)
+
+        # Pad A_prev and dA_prev
+        A_prev_pad = zero_pad(A_prev, pad)
+        dA_prev_pad = zero_pad(dA_prev, pad)
+
+        for i in range(m):                       # loop over the training examples
+
+            # select ith training example from A_prev_pad and dA_prev_pad
+            a_prev_pad = A_prev_pad[i, :, :, :]
+            da_prev_pad = dA_prev_pad[i, :, :, :]
+
+            for h in range(n_H):                   # loop over vertical axis of the output volume
+                for w in range(n_W):               # loop over horizontal axis of the output volume
+                    for c in range(n_C):           # loop over the channels of the output volume
+
+                        # Find the corners of the current "slice"
+                        vert_start = stride * h
+                        vert_end = stride * h + f
+                        horiz_start = stride * w
+                        horiz_end = stride * w + f
+
+                        # Use the corners to define the slice from a_prev_pad
+                        a_slice = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
+
+                        # Update gradients for the window and the filter's parameters using the code formulas given above
+                        da_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :] += W[:, :, :, c] * dZ[i, h, w, c]
+                        dW[:, :, :, c] += a_slice * dZ[i, h, w, c]
+                        db[:, :, :, c] += dZ[i, h, w, c]
+
+            # Set the ith training example's dA_prev to the unpadded da_prev_pad (Hint: use X[pad:-pad, pad:-pad, :])
+            dA_prev[i, :, :, :] = da_prev_pad[pad:-pad, pad:-pad, :]
+
+        # Making sure your output shape is correct
+        assert(dA_prev.shape == (m, n_H_prev, n_W_prev, n_C_prev))
+
+        return dA_prev, dW, db
+
+ 
 
 ## Pooling Functions
 ### Forward Pass of the Pooling Layer
