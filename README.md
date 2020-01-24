@@ -1,5 +1,7 @@
 # Convolutional Neural Network
-Humans and other animals use vision to identify nearby objects, such as enemies, food, and mates. This is done by distinguishing one region in the image from another, based on differences in brightness and color. In other words, the first step in recognizing an object is to identify its edges, the discontinuity that separates an object from its background. The middle layer of the retina helps this task by sharpening the edges in the viewed image. And this way the later layers concentrate on other complex features.
+Before talking about CNN, let's think about how human visual system works. Humans and other animals use vision to identify nearby objects by distinguishing one region in the image from another, based on differences in brightness and color. 
+
+In other words, the first step in recognizing an object is to identify its edges, the discontinuity that separates an object from its background. The middle layer of the retina helps this task by sharpening the edges in the viewed image. And this way the later layers concentrate on other complex features.
 
 ![cat](https://github.com/sifat95/CNN-Tutorial/blob/master/images/cat.png)
 
@@ -7,13 +9,17 @@ Humans can spot and recognize patterns without having to re-learn the concept an
 
 Coming back to CNN, this network was created exclusively for image recognition tasks and has been extensively used in the field of computer vision for decades, be it self-driving cars, medical image analysis or object/face detection. The first Convolutional Neural Network — LeNet-5 — was first introduced in 1998 in a paper by Bengio, Le Cun, Bottou and Haffner where it was able to classify digits from hand-written numbers. 
                                         
-So, earlier I have mentioned about our visual data processing in the visual cortex begins with the detection of lines, edges, corners by the simple cells and the analysis of other complex features (such as colours, shape, orientation) by the complex cells, which also shown to have more spatial invariance (not dependent of orientation) in their response. Studies have concluded that complex cells achieved this by pooling over visual data from multiple simple cells, each with a different preferred location. and just like how the cells process visual information in the cortex, these two features — selectivity to specific features and increasing spatial invariance through feedforward connection — is what make the artificial visual systems like CNNs very unique.
+Earlier I have mentioned about our visual data processing in the visual cortex begins with the detection of lines, edges, corners by the simple cells and the analysis of other complex features (such as colours, shape, orientation) by the complex cells. CNN also follows this mechanism by performing convolutions over images repeatedly. 
 
-So, convolutional operations are performed on image pixels by filters to learn features lying in those pixels. That is, CNN is neural network that performs series of convolution in every convolutional layer.
+Studies have concluded that complex cells achieved this by pooling over visual data from multiple simple cells, each with a different preferred location. and just like how the cells process visual information in the cortex, these two features — selectivity to specific features and increasing spatial invariance through feedforward connection — is what make the artificial visual systems like CNNs very unique.
+
+So, convolutional operations are performed on image pixels by filters to learn features lying in those pixels. That is, CNN is a neural network that performs series of convolution in every convolutional layer.
 
 The whole system of CNN is composed of only two major parts:
+
 **Feature Extraction:**
 During FE, the network will perform a series of convolutions (think of convolution as combining two things together to give certain output) and pooling operations where features are detected. This is the part where certain feature such as the cat’s ear, paw, fur colour is recognised.
+
 **Classification:**
 Here, the fully connected layers will serve as a classifier on top of these extracted features. They will assign a probability for the object on the image being what the algorithm predicts it is.  
 
