@@ -1,15 +1,26 @@
 # Convolutional Neural Network
+Humans and other animals use vision to identify nearby objects, such as enemies, food, and mates. This is done by distinguishing one region in the image from another, based on differences in brightness and color. In other words, the first step in recognizing an object is to identify its edges, the discontinuity that separates an object from its background. The middle layer of the retina helps this task by sharpening the edges in the viewed image. And this way the later layers concentrate on other complex features.
 
+![cat](https://github.com/sifat95/CNN-Tutorial/blob/master/images/cat.png)
 
+Humans can spot and recognize patterns without having to re-learn the concept and identify objects no matter angle we look at. The normal feed-forward neural network can’t do this. While we can easily see that the image above is a cat, what a computer actually sees is a numerical array where each value represents the colour intensity of each pixel.
 
-The formulas relating the output shape of the convolution to the input shape is:
+Coming back to CNN, this network was created exclusively for image recognition tasks and has been extensively used in the field of computer vision for decades, be it self-driving cars, medical image analysis or object/face detection. The first Convolutional Neural Network — LeNet-5 — was first introduced in 1998 in a paper by Bengio, Le Cun, Bottou and Haffner where it was able to classify digits from hand-written numbers. 
+                                        
+So, earlier I have mentioned about our visual data processing in the visual cortex begins with the detection of lines, edges, corners by the simple cells and the analysis of other complex features (such as colours, shape, orientation) by the complex cells, which also shown to have more spatial invariance (not dependent of orientation) in their response. Studies have concluded that complex cells achieved this by pooling over visual data from multiple simple cells, each with a different preferred location. and just like how the cells process visual information in the cortex, these two features — selectivity to specific features and increasing spatial invariance through feedforward connection — is what make the artificial visual systems like CNNs very unique.
 
-                                          nH = ⌊(nHprev−f+2×pad)/stride⌋+1
- 
-                                          nW = ⌊(nWprev−f+2×pad)/stride⌋+1
-                                          
-                                          nC = number of filters used in the convolution
+So, convolutional operations are performed on image pixels by filters to learn features lying in those pixels. That is, CNN is neural network that performs series of convolution in every convolutional layer.
+
+The whole system of CNN is composed of only two major parts:
+**Feature Extraction:**
+During FE, the network will perform a series of convolutions (think of convolution as combining two things together to give certain output) and pooling operations where features are detected. This is the part where certain feature such as the cat’s ear, paw, fur colour is recognised.
+**Classification:**
+Here, the fully connected layers will serve as a classifier on top of these extracted features. They will assign a probability for the object on the image being what the algorithm predicts it is.  
+
+There are different versions of CNN. We will discuss them shortly after exploring the basic building blocks of a CNN model. In this tutorial, I have followed the Programming Assessment of ![this](https://www.coursera.org/learn/convolutional-neural-networks/home/welcome) course by Andrew Ng.
+
 # Building Blocks of a Convolutional Neural Network 
+Assuming that we all know how an artificial neural network works now, we will be implementing the building blocks of a convolutional neural network now.
 
 ![Convolutional Layer](https://github.com/sifat95/CNN-Tutorial/blob/master/images/model.png)
 
@@ -77,6 +88,14 @@ Z -- a scalar value, the result of convolving the sliding window (W, b) on a sli
 ### Convolution
  1. **Forward Propagation**
 In the forward pass, inputs are convolved with many filters. Each 'convolution' gives a 2D matrix output. And at the end, these outputs are stacked to get a 3D volume.
+
+The formulas relating the output shape of the convolution to the input shape is:
+
+                                          nH = ⌊(nHprev−f+2×pad)/stride⌋+1
+ 
+                                          nW = ⌊(nWprev−f+2×pad)/stride⌋+1
+                                          
+                                          nC = number of filters used in the convolution
 
 #### Arguments of the Function:
 A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
@@ -292,12 +311,12 @@ Let's implement the backward pass for the pooling layer, starting with the MAX-P
 #### Max pooling - backward pass 
 A "mask" matrix is needed as follows which keeps track of where the maximum of the matrix is. True (1) indicates the position of the maximum in X, the other entries are False (0). 
 
-![mask]()
+![mask](https://github.com/sifat95/CNN-Tutorial/blob/master/images/max.png)
 
 #### Average Pooling - backward pass
 In average pooling, every element of the input window has equal influence on the output. So to implement backprop, for example if we did average pooling in the forward pass using a 2x2 filter, then the mask you'll use for the backward pass will look like
 
-![avg]()
+![avg](https://github.com/sifat95/CNN-Tutorial/blob/master/images/avg.png)
 
 This implies that each position in the  dZdZ  matrix contributes equally to output because in the forward pass, we took an average.
 
@@ -433,4 +452,8 @@ Noticeably, through these two mechanisms,
  
 So, these are a couple of the reasons why convolutional neural network work so well in computer vision.
 
+References-
+https://www.coursera.org/learn/convolutional-neural-networks/home/welcome
+https://becominghuman.ai/from-human-vision-to-computer-vision-convolutional-neural-network-part3-4-24b55ffa7045
+https://www.dspguide.com/ch24/1.htm
  
