@@ -447,9 +447,9 @@ But if we look at the number of parameters in this convolutional layer, each fil
 
 So reasons behind these small number of parameters are- parameter sharing and sparsity of connections, which are considered two main advantages of CNN.
 
- 1. #### **Parameter Sharing** means it learns the data-dependent filter based on parts of input images. That is, a feature detector such as vertical edge detector, that's useful in one part of the image is probably useful in another part of the image.
+ 1. **Parameter Sharing** means it learns the data-dependent filter based on parts of input images. That is, a feature detector such as vertical edge detector, that's useful in one part of the image is probably useful in another part of the image.
 
-2. #### **Sparsity of Connections** is that each output element is depended only on some number of input.  
+2. **Sparsity of Connections** is that each output element is depended only on some number of input.  
 If we consider this example, a six by six image is convolved using three by three convolution filter. And so, each single output depends only on this three by three inputs grid or cells. So, it is as if this output units on the right is connected only to nine out of these six by six, 36 input features. And in particular, the rest of these pixel values do not have any effects on the other output. 
 
 Noticeably, through these two mechanisms, 
@@ -459,6 +459,7 @@ Noticeably, through these two mechanisms,
 So, these are a couple of the reasons why convolutional neural network work so well in computer vision.
 
 References-
+
 https://www.coursera.org/learn/convolutional-neural-networks/home/welcome
 https://becominghuman.ai/from-human-vision-to-computer-vision-convolutional-neural-network-part3-4-24b55ffa7045
 https://www.dspguide.com/ch24/1.htm
